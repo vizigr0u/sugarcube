@@ -25,7 +25,7 @@ class Ingredient(object):
     def _transform(self, unit):
         if isinstance(unit, Measure):
             unit = unit.refUnit
-        newAmount =  self.amount.unit.measure.to(unit.measure)(self.amount.toRefUnit(), self.element)
+        newAmount =  self.amount.unit.measure.transformTo(unit.measure)(self.amount, self.element)
         return Ingredient(newAmount.to(unit), self.element)
 
 class Amount(object):
@@ -83,7 +83,7 @@ class Measure(object):
     def addUnits(self, units):
         for unit in units:
             self.addUnit(unit)
-    def to(self, measure):
+    def transformTo(self, measure):
         if measure not in self.transform_functions:
             raise ValueError("No transformation known bewteen " + self.name + " and " + measure.name)
         return self.transform_functions[measure]
