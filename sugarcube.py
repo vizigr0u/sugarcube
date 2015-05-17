@@ -41,14 +41,14 @@ class Ingredient(object):
         >>> (1 * Volume.cup * Flour).to(Mass.gram).amount
         168 g
         """
+        if isinstance(unit, Measure):
+            unit = unit.refUnit
         if unit.measure == self.amount.unit.measure:
             return Ingredient(self.amount.to(unit), element)
         return self._transform(unit)
     def __repr__(self):
         return "%s %s" % (self.amount, self.element)
     def _transform(self, unit):
-        if isinstance(unit, Measure):
-            unit = unit.refUnit
         newAmount =  self.amount.unit.measure.transformTo(unit.measure)(self.amount, self.element)
         return Ingredient(newAmount.to(unit), self.element)
 
