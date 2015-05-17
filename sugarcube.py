@@ -64,7 +64,7 @@ class Amount(object):
         self.value = value
         self.unit = unit
     def to(self, unit, properties=None):
-        """ convert to another unit of the same measurement
+        """ convert to another unit of the same measure
 
         >>> (2 * Volume.liter).to(Volume.centiliter)
         200 cl
@@ -85,7 +85,7 @@ class Amount(object):
         newAmount = Amount(unit.converter.fromRef(refAmount.value), unit)
         return newAmount
     def toRefUnit(self):
-        """ convert to the reference unit of a unit measurement
+        """ convert to the reference unit of a unit measure
         """
         return self.unit.converter.toRef(self.value) * self.unit.measure.refUnit
     
