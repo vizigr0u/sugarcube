@@ -42,7 +42,7 @@ class Ingredient(object):
         168 g
         """
         if isinstance(unit, Measure):
-            unit = unit.refUnit
+            unit = unit.baseUnit
         if unit.measure == self.amount.unit.measure:
             return Ingredient(self.amount.to(unit), self.element)
         return self._transform(unit)
@@ -77,17 +77,17 @@ class Amount(object):
             return self
         if unit.measure != self.unit.measure:
             raise TypeError("Can't implicitely convert from " + self.unit.measure.name + " to " + unit.measure.name)
-        refAmount = self
-        if self.unit != self.unit.measure.refUnit:
-            refAmount = self.toRefUnit()
-        if unit == refAmount.unit:
-            return refAmount
-        newAmount = Amount(unit.converter.fromRef(refAmount.value), unit)
+        baseAmount = self
+        if self.unit != self.unit.measure.baseUnit:
+            baseAmount = self.toBaseUnit()
+        if unit == baseAmount.unit:
+            return baseAmount
+        newAmount = Amount(unit.converter.fromBase(baseAmount.value), unit)
         return newAmount
-    def toRefUnit(self):
-        """ convert to the reference unit of a unit measure
+    def toBaseUnit(self):
+        """ convert to the base unit of a unit measure
         """
-        return self.unit.converter.toRef(self.value) * self.unit.measure.refUnit
+        return self.unit.converter.toBase(self.value) * self.unit.measure.baseUnit
     
     def __mul__(self, other):
         if isinstance(other, Element):
@@ -106,11 +106,11 @@ class Amount(object):
         return "%s %s" % ((self.unit.abrev, valuestr) if self.unit.preFix else (valuestr, self.unit.abrev))
 
 class Measure(object):
-    def __init__(self, name, refUnit):
+    def __init__(self, name, baseUnit):
         self.name = name
         self.units = {}
-        self.addUnit(refUnit)
-        self.refUnit = refUnit
+        self.addUnit(baseUnit)
+        self.baseUnit = baseUnit
         self.transform_functions = {}
     def addUnit(self, unit):
             if not isinstance(unit, Unit):
@@ -132,20 +132,18 @@ class Measure(object):
             self.transform_functions[toMeasure] = function
 
 class Converter(object):
-    def __init__(self, toRefFunction, fromRefFunction):
-        self.toRef = toRefFunction
-        self.fromRef = fromRefFunction
+    def __init__(self, toBaseConversion, fromBaseConversion):
+        self.toBase = toBaseConversion
+        self.fromBase = fromBaseConversion
     @property
     def reverse(self):
-        return Converter(self.fromRef, self.toRef)
+        return Converter(self.fromBase, self.toBase)
     @classmethod
     def Linear(cls, factor, constant=0):
         return cls(lambda n: n * factor + constant, lambda n: (n - constant) / factor)
     @classmethod
     def Constant(cls, constant):
         return cls.Linear(1, constant)
-    def __repr__(self):
-        return "1 u. ~= %g ref." % self.toRef(1)
 Converter.Neutral = Converter.Linear(1)
 
 class Unit(object):
@@ -166,7 +164,7 @@ class Unit(object):
         return self.name
 
 def SIUnitsFromUnit(unit):
-    """list the most common SI units based of a reference unit
+    """list the most common SI units based of a base unit
 
     SIUnitsFromUnit(Unit('liter', 'l')) -> [ Unit('milliliter', 'ml' (0.001 liter)), (...) ]
     prefixes: milli, centi, deci, deca, hecto, kilo
