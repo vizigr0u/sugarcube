@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # python 2 compatibility
@@ -5,7 +6,14 @@ from __future__ import division
 from builtins import int, str
 
 class Element(object):
+    """ Food or other element with certain properties
+    """
     def __init__(self, name, **properties):
+        """properties are set as attributes for easier access
+
+        >>> Element('flour', color='#ffffff', density=0.7).density
+        0.7
+        """
         self.name = name
         for prop in properties:
             setattr(self, prop, properties[prop])
@@ -13,10 +21,26 @@ class Element(object):
         return self.name
 
 class Ingredient(object):
+    """ An amount of a certain element
+
+    >>> Ingredient(3 * Volume.teaspoon, Element('sugar'))
+    3 tsp. sugar
+
+    shorter syntax using multiplication:
+    >>> 30 * Volume.milliliter * Element('cyanide')
+    30 ml cyanide
+    """
     def __init__(self, amount, element):
         self.amount = amount
         self.element = element
     def to(self, unit):
+        """ Convert to a different unit, or measure depending on the properties of its element
+
+        >>> (2 * Volume.cup * Element('water')).to(Volume.milliliter)
+        480 ml water
+        >>> (1 * Volume.cup * Flour).to(Mass.gram).amount
+        168 g
+        """
         if unit.measure == self.amount.unit.measure:
             return Ingredient(self.amount.to(unit), element)
         return self._transform(unit)
@@ -29,10 +53,24 @@ class Ingredient(object):
         return Ingredient(newAmount.to(unit), self.element)
 
 class Amount(object):
+    """ Amount/quantity of a Unit
+
+    >>> Amount(5, Mass.decigram)
+    5 dg
+    >>> 3 * Volume.hectoliter
+    3 hl
+    """
     def __init__(self, value, unit):
         self.value = value
         self.unit = unit
     def to(self, unit, properties=None):
+        """ convert to another unit of the same measurement
+
+        >>> (2 * Volume.liter).to(Volume.centiliter)
+        200 cl
+        >>> (0 * Temperature.kelvin).to(Temperature.celsius)
+        -273.15 °C
+        """
         if not isinstance(unit, Unit):
             raise TypeError('Expected Unit type but unit is type ' + type(unit).__name__)
         if self.unit == unit:
@@ -47,6 +85,8 @@ class Amount(object):
         newAmount = Amount(unit.converter.fromRef(refAmount.value), unit)
         return newAmount
     def toRefUnit(self):
+        """ convert to the reference unit of a unit measurement
+        """
         return self.unit.converter.toRef(self.value) * self.unit.measure.refUnit
     
     def __mul__(self, other):
@@ -208,3 +248,8 @@ Flour  = Element('Flour',  density=0.7)
 Sugar  = Element('Sugar',  density=1.2)
 Salt   = Element('Salt',   density=1.2)
 Butter = Element('Butter', density=0.9)
+
+# run the module to make it test itself
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
