@@ -3,6 +3,28 @@
 
 # sugarcube.py
 """Convert cooking ingredients to various measurements
+
+Usage and examples:
+>>> (1 * Volume.cup).to(Volume.milliliter)
+240 ml
+>>> (250 * Mass.gram * Flour).to(Volume.cup)
+1.4881 cup Flour
+>>> (1 * Volume.cup * Sugar).to(Mass.gram)
+288 g Sugar
+>>> (175 * Mass.gram * Flour).to(Volume.tablespoon)
+16.6667 tbsp. Flour
+>>> (1 * Volume.teaspoon * Salt).to(Mass.gram)
+6 g Salt
+>>> (1 * Volume.stick * Butter).to(Mass.gram)
+113.4 g Butter
+>>> (125 * Mass.gram * Butter).to(Volume.stick)
+1.10229 stick Butter
+>>> (37.7 * Temperature.celsius).to(Temperature.fahrenheit)
+99.86 °F
+>>> (210 * Temperature.celsius).to(Temperature.thermostat)
+thermostat 7
+>>> (Temperature.thermostat * 6).to(Temperature.fahrenheit)
+356 °F
 """
 
 # python 2 compatibility
