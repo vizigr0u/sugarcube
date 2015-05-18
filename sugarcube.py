@@ -15,10 +15,10 @@ Usage and examples:
 16.6667 tbsp. Flour
 >>> (1 * Volume.teaspoon * Salt).to(Mass.gram)
 6 g Salt
->>> (1 * Volume.stick * Butter).to(Mass.gram)
-113.4 g Butter
->>> (125 * Mass.gram * Butter).to(Volume.stick)
-1.10229 stick Butter
+>>> (1 * Mass.stick * Butter).to(Mass.gram)
+113.398 g Butter
+>>> (125 * Mass.gram * Butter).to(Mass.stick)
+1.10231 stick Butter
 >>> (37.7 * Temperature.celsius).to(Temperature.fahrenheit)
 99.86 °F
 >>> (210 * Temperature.celsius).to(Temperature.thermostat)
@@ -312,24 +312,28 @@ Mass.addTransform(Volume, lambda mass, element: ((mass.to(gram)).value / element
 
 # USA cooking units
 
+CUP_IN_LITER    = 0.240         # 'US legal' cup definition
+GALLON_IN_LITER = 231 * 2.54**3 # 231 cubic inches
+POUND_IN_GRAMS  = 453.59237     # NIST pound definition
+
 Volume.addUnits([
     # FDA units
-    Unit('teaspoon',        'tsp.',     converter=Converter.Linear(0.005)),
-    Unit('tablespoon',      'tbsp.',    converter=Converter.Linear(0.015)),
-    Unit('fluidOunce',      'fl. oz.',  converter=Converter.Linear(0.03)),
-    Unit('cup',             'cup',      converter=Converter.Linear(0.240)),
+    Unit('pinch',           'pinch',    converter=Converter.Linear(CUP_IN_LITER / 768)),
+    Unit('teaspoon',        'tsp.',     converter=Converter.Linear(CUP_IN_LITER / 48)),
+    Unit('tablespoon',      'tbsp.',    converter=Converter.Linear(CUP_IN_LITER / 16)),
+    Unit('fluidOunce',      'fl. oz.',  converter=Converter.Linear(CUP_IN_LITER / 8)),
+    Unit('cup',             'cup',      converter=Converter.Linear(CUP_IN_LITER)),
 
     #other units
-    Unit('pinch',           'pinch',    converter=Converter.Linear(0.000625)),
-    Unit('stick',           'stick',    converter=Converter.Linear(0.126)),
-    Unit('pint',            'pt.',      converter=Converter.Linear(0.47318)),
-    Unit('quart',           'qt',       converter=Converter.Linear(0.94635)),
-    Unit('gallon',          'gal.',     converter=Converter.Linear(3.78541))
+    Unit('pint',            'pt.',      converter=Converter.Linear(GALLON_IN_LITER / 8)),
+    Unit('quart',           'qt',       converter=Converter.Linear(GALLON_IN_LITER / 4)),
+    Unit('gallon',          'gal.',     converter=Converter.Linear(GALLON_IN_LITER))
 ])
 
 Mass.addUnits([
-    Unit(name='ounce',  abrev='oz', converter=Converter.Linear(28.349523125)),
-    Unit(name='pound',  abrev='lb', converter=Converter.Linear(453.59237))
+    Unit('ounce',   'oz',       converter=Converter.Linear(POUND_IN_GRAMS / 16)),
+    Unit('stick',   'stick',    converter=Converter.Linear(POUND_IN_GRAMS / 4)),
+    Unit('pound',   'lb',       converter=Converter.Linear(POUND_IN_GRAMS))
 ])
 
 # Common Ingredients
