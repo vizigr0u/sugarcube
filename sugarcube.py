@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# sugarcube.py
+"""Convert cooking ingredients to various measurements
+"""
+
 # python 2 compatibility
 from __future__ import division
 from builtins import int, str
@@ -88,8 +92,14 @@ class Amount(object):
         """ convert to the base unit of a unit measure
         """
         return self.unit.converter.toBase(self.value) * self.unit.measure.baseUnit
-    
     def __mul__(self, other):
+        """ Ingredient constructor or simple numeric multiplier
+
+        >>> 42 * Mass.gram * Flour
+        42 g Flour
+        >>> 3 * Amount(5, Volume.liter)
+        15 l
+        """
         if isinstance(other, Element):
             return Ingredient(self, other)
         if isinstance(other, (int, float)):
@@ -98,6 +108,11 @@ class Amount(object):
     def __rmul__(self, other):
         return self.__mul__(other)
     def __truediv__(self, other):
+        """ regular division
+
+        >>> Amount(42, Mass.gram) / 7
+        6 g
+        """
         if isinstance(other, (int, float)):
             return Amount(self.value / other, self.unit)
         raise TypeError("Unable to divide " + self.unit.measure + " by " + type(other).__name__)
@@ -106,45 +121,96 @@ class Amount(object):
         return "%s %s" % ((self.unit.abrev, valuestr) if self.unit.preFix else (valuestr, self.unit.abrev))
 
 class Measure(object):
+    """ Category of units (mass, length, volume, ...)
+    Defined by a base unit (i.e. gram)
+    several units can be bound (added) to a measure
+    >>>
+    """
     def __init__(self, name, baseUnit):
+        """ Create a new measure defined by a base unit
+
+        >>> Measure('time', Unit('second', 's')).name
+        'time'
+        """
         self.name = name
         self.units = {}
         self.addUnit(baseUnit)
         self.baseUnit = baseUnit
         self.transform_functions = {}
     def addUnit(self, unit):
-            if not isinstance(unit, Unit):
-                raise TypeError('Expected a type Unit, but got type ' + type(unit).__name__)
-            if unit.name in self.units:
-                raise ValueError("%s already contains a unit named %s" % (self.name, unit.name))
-            unit.measure = self
-            self.units[unit.name] = unit
-            setattr(self, unit.name, unit)
+        """ add a Unit to a measure
+        unit is then accessible as an attribute
+
+        >>> Time.addUnit(Unit('day', 'day')); Time.day
+        day
+        """
+        if not isinstance(unit, Unit):
+            raise TypeError('Expected a type Unit, but got type ' + type(unit).__name__)
+        if unit.name in self.units:
+            raise ValueError("%s already contains a unit named %s" % (self.name, unit.name))
+        unit.measure = self
+        self.units[unit.name] = unit
+        setattr(self, unit.name, unit)
     def addUnits(self, units):
+        """ add a collection of units
+        see addUnit
+
+        >>> Volume.addUnits([Unit('drop', 'drop'), Unit('bowl', 'bowl')]); Volume.drop
+        drop
+        """
         for unit in units:
             self.addUnit(unit)
     def transformTo(self, measure):
+        """ get a registered transformation function to a different Measure
+        """
         if measure not in self.transform_functions:
             raise ValueError("No transformation known bewteen " + self.name + " and " + measure.name)
         return self.transform_functions[measure]
     def addTransform(self, toMeasure, function):
+        """ Register a transformation function to another Measure
+        """
         if toMeasure not in self.transform_functions:
             self.transform_functions[toMeasure] = function
 
 class Converter(object):
+    """ set of methods to convert a unit to and from a base unit
+    easily created through some helper constructor fonctions below
+
+    >>> Converter(lambda n: n / 2, lambda n: 2 * n).toBase(50)
+    25.0
+    """
     def __init__(self, toBaseConversion, fromBaseConversion):
+        """ create a converter using 2 functions : convert to base, convert from base
+        """
         self.toBase = toBaseConversion
         self.fromBase = fromBaseConversion
     @property
     def reverse(self):
+        """ return a converter with swapped conversion functions
+
+        >>> Converter(lambda n: n / 2, lambda n: 2 * n).reverse.toBase(21)
+        42
+        """
         return Converter(self.fromBase, self.toBase)
     @classmethod
     def Linear(cls, factor, constant=0):
+        """ linear function converter (y = ax + b, x = (y - b) / a)
+
+        >>> Converter.Linear(5, 1).toBase(2)
+        11
+        """
         return cls(lambda n: n * factor + constant, lambda n: (n - constant) / factor)
     @classmethod
     def Constant(cls, constant):
+        """ converter that adds a constant (y = x + a, x = y - a)
+
+        >>> Converter.Constant(7).toBase(5)
+        12
+        """
         return cls.Linear(1, constant)
 Converter.Neutral = Converter.Linear(1)
+""" Converter that doesn't change the value
+"""
 
 class Unit(object):
     """Unit of a measure, i.e. gram (mass), liter (volume) etc.
@@ -165,9 +231,10 @@ class Unit(object):
 
 def SIUnitsFromUnit(unit):
     """list the most common SI units based of a base unit
-
-    SIUnitsFromUnit(Unit('liter', 'l')) -> [ Unit('milliliter', 'ml' (0.001 liter)), (...) ]
     prefixes: milli, centi, deci, deca, hecto, kilo
+
+    >>> list(SIUnitsFromUnit(Unit('liter', 'l')))
+    [milliliter, centiliter, deciliter, decaliter, hectoliter, kiloliter]
     """
     if not isinstance(unit, Unit):
         raise TypeError('Expected type Unit, but unit is type ' + type(unit).__name__)
