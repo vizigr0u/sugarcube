@@ -310,23 +310,26 @@ gram = Mass.gram
 Volume.addTransform(Mass, lambda volume, element: (element.density * volume.to(milliliter)).value * gram)
 Mass.addTransform(Volume, lambda mass, element: ((mass.to(gram)).value / element.density) * milliliter)
 
-# US cooking units
+# USA cooking units
 
 Volume.addUnits([
-    Unit('pinch',           'pinch',    converter=Converter.Linear(0.000625)),
+    # FDA units
     Unit('teaspoon',        'tsp.',     converter=Converter.Linear(0.005)),
     Unit('tablespoon',      'tbsp.',    converter=Converter.Linear(0.015)),
-    Unit('FluidOunce',      'oz',       converter=Converter.Linear(0.03)),
-    Unit('stick',           'stick',    converter=Converter.Linear(0.126)),
+    Unit('fluidOunce',      'fl. oz.',  converter=Converter.Linear(0.03)),
     Unit('cup',             'cup',      converter=Converter.Linear(0.240)),
+
+    #other units
+    Unit('pinch',           'pinch',    converter=Converter.Linear(0.000625)),
+    Unit('stick',           'stick',    converter=Converter.Linear(0.126)),
     Unit('pint',            'pt.',      converter=Converter.Linear(0.47318)),
     Unit('quart',           'qt',       converter=Converter.Linear(0.94635)),
     Unit('gallon',          'gal.',     converter=Converter.Linear(3.78541))
 ])
 
 Mass.addUnits([
-    Unit(name='Ounce',  abrev='oz', converter=Converter.Linear(28.349523125)),
-    Unit(name='Pound',  abrev='lb', converter=Converter.Linear(453.59237))
+    Unit(name='ounce',  abrev='oz', converter=Converter.Linear(28.349523125)),
+    Unit(name='pound',  abrev='lb', converter=Converter.Linear(453.59237))
 ])
 
 # Common Ingredients
