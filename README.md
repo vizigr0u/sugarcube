@@ -16,7 +16,8 @@ Converting grams of flour into cups:
 from sugarcube import Mass, Volume, Flour
 
 ingredient = 250 * Mass.gram * Flour
-print("%s = %s" % (ingredient, ingredient.to(Volume.cup))) # 250 g Flour = 1.4881 cup Flour
+print("%s = %s" % (ingredient, ingredient.to(Volume.cup)))
+# prints: 250 g Flour = 1.4881 cup Flour
 ```
 
 `help(sugarcube)` contains several usage examples
