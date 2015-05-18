@@ -235,9 +235,20 @@ Converter.Neutral = Converter.Linear(1)
 """
 
 class Unit(object):
-    """Unit of a measure, i.e. gram (mass), liter (volume) etc.
-    """
+    """Unit of a measure, i.e. gram (mass), liter (volume) etc."""
     def __init__(self, name='Unknown unit', abrev='?unit', preFix=False, converter=Converter.Neutral):
+        """ create a unit by name
+
+        parameters:
+        name: name of the unit ('liter', 'second', 'joule')
+        abrev: abreviated name of the unit, used for displaying ('l', 's', 'J')
+        prefix: for display purposes: if true, the unit name precedes the number (i.e. '$ 5')
+        converter: a Converter object to convert this unit to and from the base unit
+
+        >>> Length.addUnit(Unit('yard', 'yd', converter=Converter.Linear(0.9144)))
+        >>> (3 * Length.decameter).to(Length.yard)
+        32.8084 yd
+        """
         self.name = name
         self.abrev = abrev
         self.preFix = preFix
