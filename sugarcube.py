@@ -253,6 +253,7 @@ class Unit(object):
 
 def SIUnitsFromUnit(unit):
     """list the most common SI units based of a base unit
+    result does NOT include the base unit
     prefixes: milli, centi, deci, deca, hecto, kilo
 
     >>> list(SIUnitsFromUnit(Unit('liter', 'l')))
