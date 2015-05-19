@@ -8,6 +8,9 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
+ProjectName = 'sugarcube'
+ProjectVersion = '0.1b'
+
 here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the relevant file
@@ -15,22 +18,26 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='sugarcube',
-    version='0.1a',
+    name=ProjectName,
+    version=ProjectVersion,
     description='Convert food quantities and units',
     long_description=long_description,
-    url='https://github.com/vizigr0u/sugarcube',
+    keywords='cooking units conversion measures',
 
     # Author details
     author='Vladimir Nachbaur',
     author_email='vizigr0u@gmail.com',
+    url='https://github.com/vizigr0u/' + ProjectName,
+
+    install_requires=['future'],
+    py_modules=[ProjectName],
 
     license='MIT',
     classifiers=[
         #   3 - Alpha
         #   4 - Beta
         #   5 - Production/Stable
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
 
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
@@ -45,7 +52,4 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
     ],
-    keywords='cooking units conversion measures',
-    py_modules=['sugarcube'],
-    install_requires=['future'],
 )
