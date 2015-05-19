@@ -4,6 +4,10 @@ sugarcube is a single-file python API to convert cooking ingredients to various 
 It is compatible with python 2.7 and python 3.4
 
 ## Installation
+using pip
+`pip install https://github.com/vizigr0u/sugarcube/tarball/master`
+
+or without pip
 ```bash
 git clone https://github.com/vizigr0u/sugarcube.git
 cd sugarcube
