@@ -28,6 +28,7 @@ setup(
     author='Vladimir Nachbaur',
     author_email='vizigr0u@gmail.com',
     url='https://github.com/vizigr0u/' + ProjectName,
+    download_url = 'https://github.com/vizigr0u/%s/tarball/%s' % (ProjectName, ProjectVersion),
 
     install_requires=['future'],
     py_modules=[ProjectName],
