@@ -9,7 +9,7 @@ from codecs import open
 from os import path
 
 ProjectName = 'sugarcube'
-ProjectVersion = '0.1b'
+ProjectVersion = '0.1.1'
 
 here = path.abspath(path.dirname(__file__))
 
@@ -39,12 +39,7 @@ setup(
         #   4 - Beta
         #   5 - Production/Stable
         'Development Status :: 4 - Beta',
-
-        'Intended Audience :: Developers',
-        'Topic :: Software Development :: Build Tools',
-
         'License :: OSI Approved :: MIT License',
-
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
