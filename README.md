@@ -30,5 +30,4 @@ print("%s = %s" % (ingredient, ingredient.to(Volume.cup)))
 
 Non-metric units are based on modern US standards :
 - 1 cup = 240ml (FDA/*'US legal'* definition)
-- 1 gallon = 231 * (2.54^3)
 - 1 pound = 453.59237 grams
